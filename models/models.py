@@ -119,24 +119,32 @@ class PurchaseLicense(models.Model):
                     list_of_lines = list(product.product_id.licenses) #returns a list of product license objects
                     sort_by_exp = lambda l: l.license_expire_date 
                     list_of_lines.sort(key=sort_by_exp)
-                    subt_item = list_of_lines[0]
-                    if subt_item.quantity > 0:
-                        subt_item.quantity = subt_item.quantity - product.product_qty
-                        self.notes= subt_item.quantity
-                        license_lines = subt_item.license_id.product_lines
-                        wanted_line = license_lines.search([('product_id', '=', product.product_id.id)],limit=1)
-                        product.product_id.write({'licenses': [(1, wanted_line.id, {
-                            'quantity': subt_item.quantity
-                        })]})
-                        if subt_item.quantity == 0 :
-                            product.product_id.write({"licenses":[(2,subt_item.id,{})]})
-                        # res = super(PurchaseLicense,self).button_confirm()
-                        # return res
-                    else:
-                        raise UserError(_("One or more products has no valid license"))
+                    #subt_item = list_of_lines[0]
+                    for subt_item in list_of_lines:
+                        if subt_item.license_poe == product.poe:
+                            subt_item.quantity = subt_item.quantity - product.product_qty
+                            self.notes= subt_item.quantity
+                            license_lines = subt_item.license_id.product_lines
+                            wanted_line = license_lines.search([('product_id', '=', product.product_id.id)],limit=1)
+                            product.product_id.write({'licenses': [(1, wanted_line.id, {
+                                'quantity': subt_item.quantity
+                            })]})
+                            if subt_item.quantity == 0 :
+                                product.product_id.write({"licenses":[(2,subt_item.id,{})]})
+                            # res = super(PurchaseLicense,self).button_confirm()
+                            # return res
+                        else:
+                            raise UserError(_("no valid poe for product license "))
+                    
+                        
                 else:
                     raise UserError(_("One or more products has no valid license"))
 
 
                 
 
+class PurchaseOrderLineLicense(models.Model):
+    _inherit="purchase.order.line"
+
+
+    poe = fields.Many2one("license.poe",string="License Port of Entry",required=True)

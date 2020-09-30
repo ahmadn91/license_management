@@ -9,6 +9,9 @@
                 <field name="partner_ref" position="after">
                     <field name="enforce_license"/>
                 </field>
+                <field name="product_qty" position="after">
+                    <field name="poe" options="{'no_create_edit': True}"/>
+                </field>
             </field>
         </record>
     </data>
