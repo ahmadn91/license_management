@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="license_product_inheritance" model="ir.ui.view">
+            <field name="name">license product inheritance</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//page[@name='inventory']" position="after">
+                    <page name="license" string="License">
+                        <field name="licenses" options="{'no_create_edit': True}" >
+                                <tree editable="top">
+                                    <field name="license_number"/>
+                                    <field name="quantity"/>
+                                    <field name="license_issue_date"/>
+                                    <field name="license_expire_date"/>
+                                    <field name="license_poe"/>
+                                    
+                                </tree>
+                            </field>
+                    </page>
+                 </xpath>
+            
+
+
+            </field>
+
+        </record>
+
+    </data>
+</odoo>
+
+
+
+

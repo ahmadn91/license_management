@@ -1,0 +1,105 @@
+<odoo>
+  <data>
+    
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="license_management.list">
+      <field name="name">License Management list</field>
+      <field name="model">license.license</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="license_number" />
+          <field name="license_issue_date"/>
+          <field name="license_expire_date"/>
+          <field name="license_poe"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="license_management.form">
+      <field name="name">License Management form</field>
+      <field name="model">license.license</field>
+      <field name="arch" type="xml">
+        <form>
+        <header>
+            <field name="status" widget="statusbar" statusbar_visible="draft,confirmed"/>
+            <button type="object" string="Confirm License" name="confirm_license" attrs="{'invisible': [('status','in',['confirmed','expired'])]}" 
+            confirm="Please make sure that the license number is correct, you can`t change it after confirmation!" />
+            <button type="object" string="Update License" name="update_license" attrs="{'invisible': [('status','!=','confirmed')]}" />
+        </header>
+          
+          <sheet>
+            <widget name="web_ribbon" title="Expired" bg_color="bg-danger" attrs="{'invisible': [('status', '!=', 'expired')]}"/>
+            <group>
+              <group id="left_side">
+                  <field name="license_number" attrs="{'readonly': [('status','=','confirmed')]}"/>
+                  <field name="license_issue_date"/>
+              </group>
+              <group>
+                  <field name="license_expire_date"/>
+                  <field name="license_poe"/>
+              </group>
+              <field name="product_lines">
+                <tree editable="top">
+                  <field name="product_id" options="{'no_create_edit': True}"/>
+                  <field name="quantity"/>
+                </tree>
+              </field>
+              <field name="notes"/>
+            </group>
+            
+          </sheet>
+          
+          
+        </form>
+      </field>
+    </record>
+
+    
+    
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="license_management.action_window">
+      <field name="name">Create and Manage Licenses</field>
+      <field name="res_model">license.license</field>
+      <field name="view_mode">tree,form</field>
+      
+    </record>
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="license_management.action_server">
+      <field name="name">license_management server</field>
+      <field name="model_id" ref="model_license_management_license_management"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- Top menu item -->
+
+    <menuitem name="License Management" id="license_management.menu_root"/>
+    
+    <!-- menu categories -->
+
+    <menuitem name="Menu 1" id="license_management.menu_1" parent="license_management.menu_root"/>
+    <!--<menuitem name="Menu 2" id="license_management.menu_2" parent="license_management.menu_root"/>-->
+
+    <!-- actions -->
+
+    <menuitem name="License Management" id="license_management.menu_1_list" parent="license_management.menu_1"
+              action="license_management.action_window"/>
+<!--
+    <menuitem name="Server to list" id="license_management" parent="license_management.menu_2"
+              action="license_management.action_server"/>
+-->
+  </data>
+</odoo>
